@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { fifo } from '../algorithms/fifo';
 import { sjf } from '../algorithms/sjf';
 import ChartComponent from '../components/Chart';
+import Header from '../components/Header';  // Import the Header component
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
@@ -32,7 +33,9 @@ export default function Home() {
 
   return (
     <div>
+      <Header /> {/* Add the Header component at the top */}
       <h1>CPU Scheduling Algorithms</h1>
+      
       <label>Number of Processes: </label>
       <input
         type="number"
@@ -50,4 +53,10 @@ export default function Home() {
         <ChartComponent
           data={{
             labels: sjfResult.result.map((p) => `P${p.id}`),
-            burstTimes: sjfResult
+            burstTimes: sjfResult.result.map((p) => p.burstTime),
+          }}
+        />
+      )}
+    </div>
+  );
+}
