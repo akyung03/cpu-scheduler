@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { fifo } from '../algorithms/fifo';
 import { sjf } from '../algorithms/sjf';
-import { stcf } from '../algorithms/stcf';  // Import STCF algorithm
+import { stcf } from '../algorithms/stcf';  
 import ChartComponent from '../components/Chart';
 import Header from '../components/Header';
 
@@ -10,6 +10,7 @@ export default function Home() {
   const [processes, setProcesses] = useState([]);
   const [algorithm, setAlgorithm] = useState('');
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false); 
 
   const generateProcesses = () => {
     const generatedProcesses = [];
@@ -17,7 +18,7 @@ export default function Home() {
       generatedProcesses.push({
         id: i + 1,
         burstTime: Math.floor(Math.random() * 10) + 1,
-        arrivalTime: Math.floor(Math.random() * 10), // Added arrival time for STCF
+        arrivalTime: Math.floor(Math.random() * 10), 
       });
     }
     setProcesses(generatedProcesses);
@@ -28,14 +29,25 @@ export default function Home() {
   };
 
   const handleRunAlgorithm = () => {
-    if (algorithm === 'FIFO') {
-      setResult(fifo(processes));
-    } else if (algorithm === 'SJF') {
-      setResult(sjf(processes));
-    } else if (algorithm === 'STCF') {
-      setResult(stcf(processes));  // Run STCF algorithm
-    }
-  };
+    if (!algorithm || processes.length === 0) return;
+
+    setLoading(true); 
+
+    setTimeout(() => { 
+      let algoResult = null;
+
+      if (algorithm === 'FIFO') {
+        algoResult = fifo(processes);
+      } else if (algorithm === 'SJF') {
+        algoResult = sjf(processes);
+      } else if (algorithm === 'STCF') {
+        algoResult = stcf(processes); 
+      }
+
+      setResult(algoResult);
+      setLoading(false); 
+    }, 1000); 
+  };  
 
   return (
     <div>
@@ -58,7 +70,11 @@ export default function Home() {
         <option value="STCF">STCF</option>
       </select>
 
-      <button onClick={handleRunAlgorithm}>Run Algorithm</button>
+      <button onClick={handleRunAlgorithm} disabled={loading}>
+        {loading ? 'Running...' : 'Run Algorithm'} {/* Show loading text */}
+      </button>
+
+      {loading && <p>Processing... Please wait.</p>} {/*  Show loading message */}
 
       {result && (
         <ChartComponent
