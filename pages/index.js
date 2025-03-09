@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { fifo } from '../algorithms/fifo';
 import { sjf } from '../algorithms/sjf';
+import { stcf } from '../algorithms/stcf';  // Import STCF algorithm
 import ChartComponent from '../components/Chart';
-import Header from '../components/Header';  // Import the Header component
+import Header from '../components/Header';
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
   const [processes, setProcesses] = useState([]);
-  const [fifoResult, setFifoResult] = useState(null);
-  const [sjfResult, setSjfResult] = useState(null);
+  const [algorithm, setAlgorithm] = useState('');
+  const [result, setResult] = useState(null);
 
   const generateProcesses = () => {
     const generatedProcesses = [];
@@ -16,26 +17,31 @@ export default function Home() {
       generatedProcesses.push({
         id: i + 1,
         burstTime: Math.floor(Math.random() * 10) + 1,
+        arrivalTime: Math.floor(Math.random() * 10), // Added arrival time for STCF
       });
     }
     setProcesses(generatedProcesses);
   };
 
-  const runFIFO = () => {
-    const result = fifo(processes);
-    setFifoResult(result);
+  const handleAlgorithmChange = (e) => {
+    setAlgorithm(e.target.value);
   };
 
-  const runSJF = () => {
-    const result = sjf(processes);
-    setSjfResult(result);
+  const handleRunAlgorithm = () => {
+    if (algorithm === 'FIFO') {
+      setResult(fifo(processes));
+    } else if (algorithm === 'SJF') {
+      setResult(sjf(processes));
+    } else if (algorithm === 'STCF') {
+      setResult(stcf(processes));  // Run STCF algorithm
+    }
   };
 
   return (
     <div>
-      <Header /> {/* Add the Header component at the top */}
+      <Header />
       <h1>CPU Scheduling Algorithms</h1>
-      
+
       <label>Number of Processes: </label>
       <input
         type="number"
@@ -43,17 +49,22 @@ export default function Home() {
         onChange={(e) => setNumProcesses(parseInt(e.target.value))}
       />
       <button onClick={generateProcesses}>Generate Processes</button>
-      <button onClick={runFIFO}>Run FIFO</button>
-      <button onClick={runSJF}>Run SJF</button>
 
-      {fifoResult && <div>{/* Display FIFO result here */}</div>}
-      {sjfResult && <div>{/* Display SJF result here */}</div>}
+      <label>Select Algorithm:</label>
+      <select value={algorithm} onChange={handleAlgorithmChange}>
+        <option value="">Select Algorithm</option>
+        <option value="FIFO">FIFO</option>
+        <option value="SJF">SJF</option>
+        <option value="STCF">STCF</option>
+      </select>
 
-      {sjfResult && (
+      <button onClick={handleRunAlgorithm}>Run Algorithm</button>
+
+      {result && (
         <ChartComponent
           data={{
-            labels: sjfResult.result.map((p) => `P${p.id}`),
-            burstTimes: sjfResult.result.map((p) => p.burstTime),
+            labels: result.result.map((p) => `P${p.id}`),
+            burstTimes: result.result.map((p) => p.burstTime),
           }}
         />
       )}
