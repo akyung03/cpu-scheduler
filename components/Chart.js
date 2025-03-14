@@ -1,6 +1,6 @@
 // components/Chart.js
 import { useEffect, useRef } from 'react';
-import { Chart } from 'chart.js';
+import { Chart } from 'chart.js/auto';
 
 const ChartComponent = ({ data }) => {
   const chartRef = useRef(null);
@@ -15,7 +15,7 @@ const ChartComponent = ({ data }) => {
             {
               label: 'Burst Time',
               data: data.burstTimes,
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              backgroundColor: 'rgba(89, 134, 134, 0.2)',
               borderColor: 'rgba(75, 192, 192, 1)',
               borderWidth: 1
             },
