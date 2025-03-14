@@ -2,20 +2,20 @@ import { useState } from 'react';
 import { fifo } from '../algorithms/fifo';
 import { sjf } from '../algorithms/sjf';
 import { stcf } from '../algorithms/stcf';
-import { rr } from '../algorithms/rr'; // Import Round Robin
-import { mlfq } from '../algorithms/mlfq'; // Import MLFQ
+import { rr } from '../algorithms/rr';
+import { mlfq } from '../algorithms/mlfq';
 import ChartComponent from '../components/Chart';
 import Header from '../components/Header';
+import jsPDF from 'jspdf';
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
-  const [timeQuantum, setTimeQuantum] = useState(2); // Add time quantum for RR
+  const [timeQuantum, setTimeQuantum] = useState(2);
   const [processes, setProcesses] = useState([]);
-  const [algorithm, setAlgorithm] = useState('');
-  const [result, setResult] = useState(null);
+  const [selectedAlgorithms, setSelectedAlgorithms] = useState([]);
+  const [results, setResults] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Generate random processes
   const generateProcesses = () => {
     const generatedProcesses = [];
     for (let i = 0; i < numProcesses; i++) {
@@ -26,45 +26,82 @@ export default function Home() {
       });
     }
     setProcesses(generatedProcesses);
+    setResults({});
   };
 
-  // Handle algorithm selection
   const handleAlgorithmChange = (e) => {
-    setAlgorithm(e.target.value);
+    const algorithm = e.target.value;
+    if (selectedAlgorithms.includes(algorithm)) {
+      setSelectedAlgorithms(selectedAlgorithms.filter((algo) => algo !== algorithm));
+    } else {
+      setSelectedAlgorithms([...selectedAlgorithms, algorithm]);
+    }
   };
 
-  // Handle running the selected algorithm
-  const handleRunAlgorithm = () => {
-    if (!algorithm || processes.length === 0) return;
+  const runAlgorithms = () => {
+    if (selectedAlgorithms.length === 0 || processes.length === 0) return;
 
     setLoading(true);
 
     setTimeout(() => {
-      let algoResult = null;
+      const newResults = {};
 
-      switch (algorithm) {
-        case 'FIFO':
-          algoResult = fifo(processes);
-          break;
-        case 'SJF':
-          algoResult = sjf(processes);
-          break;
-        case 'STCF':
-          algoResult = stcf(processes);
-          break;
-        case 'RR':
-          algoResult = rr(processes, timeQuantum); // Pass time quantum to RR
-          break;
-        case 'MLFQ':
-          algoResult = mlfq(processes); // Run MLFQ
-          break;
-        default:
-          break;
-      }
+      selectedAlgorithms.forEach((algorithm) => {
+        switch (algorithm) {
+          case 'FIFO':
+            newResults.FIFO = fifo(processes);
+            break;
+          case 'SJF':
+            newResults.SJF = sjf(processes);
+            break;
+          case 'STCF':
+            newResults.STCF = stcf(processes);
+            break;
+          case 'RR':
+            newResults.RR = rr(processes, timeQuantum);
+            break;
+          case 'MLFQ':
+            newResults.MLFQ = mlfq(processes);
+            break;
+          default:
+            break;
+        }
+      });
 
-      setResult(algoResult);
+      setResults(newResults);
       setLoading(false);
-    }, 1000); // Simulate processing delay
+    }, 1000);
+  };
+
+  const resetSimulation = () => {
+    setNumProcesses(3);
+    setTimeQuantum(2);
+    setProcesses([]);
+    setSelectedAlgorithms([]);
+    setResults({});
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    let yOffset = 10;
+
+    Object.entries(results).forEach(([algorithm, result]) => {
+      doc.text(`Algorithm: ${algorithm}`, 10, yOffset);
+      yOffset += 10;
+      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
+      yOffset += 10;
+      doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
+      yOffset += 10;
+
+      result.result.forEach((process) => {
+        doc.text(`Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`, 10, yOffset);
+        yOffset += 10;
+      });
+
+      yOffset += 10;
+    });
+
+    doc.save('scheduling_results.pdf');
   };
 
   return (
@@ -72,7 +109,11 @@ export default function Home() {
       <Header />
       <h1>CPU Scheduling Algorithms</h1>
 
-      {/* Input for number of processes */}
+      <p>1. Enter the number of processes and click <strong>Generate Processes</strong>.</p>
+      <p>2. Select the algorithms you want to run.</p>
+      <p>3. Click <strong>Run Selected Algorithms</strong> to see the results.</p>
+      <p>4. After running, click <strong>Reset Simulation</strong> to start a new simulation.</p>
+
       <label>Number of Processes: </label>
       <input
         type="number"
@@ -81,8 +122,7 @@ export default function Home() {
       />
       <button onClick={generateProcesses}>Generate Processes</button>
 
-      {/* Input for time quantum (for RR) */}
-      {algorithm === 'RR' && (
+      {selectedAlgorithms.includes('RR') && (
         <div>
           <label>Time Quantum (for RR): </label>
           <input
@@ -93,43 +133,53 @@ export default function Home() {
         </div>
       )}
 
-      {/* Algorithm selection dropdown */}
-      <label>Select Algorithm:</label>
-      <select value={algorithm} onChange={handleAlgorithmChange}>
-        <option value="">Select Algorithm</option>
-        <option value="FIFO">FIFO</option>
-        <option value="SJF">SJF</option>
-        <option value="STCF">STCF</option>
-        <option value="RR">Round Robin (RR)</option>
-        <option value="MLFQ">Multi-Level Feedback Queue (MLFQ)</option>
-      </select>
+      <div>
+        <label>Select Algorithms:</label>
+        {['FIFO', 'SJF', 'STCF', 'RR', 'MLFQ'].map((algorithm) => (
+          <div key={algorithm}>
+            <input
+              type="checkbox"
+              value={algorithm}
+              checked={selectedAlgorithms.includes(algorithm)}
+              onChange={handleAlgorithmChange}
+            />
+            {algorithm}
+          </div>
+        ))}
+      </div>
 
-      {/* Run algorithm button */}
-      <button onClick={handleRunAlgorithm} disabled={loading}>
-        {loading ? 'Running...' : 'Run Algorithm'}
+      <button onClick={runAlgorithms} disabled={loading || processes.length === 0}>
+        {loading ? 'Running...' : 'Run Selected Algorithms'}
       </button>
 
-      {/* Loading message */}
+      <button onClick={resetSimulation} style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}>
+        Reset Simulation
+      </button>
+
+      <button onClick={downloadPDF} style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}>
+        Download Results as PDF
+      </button>
+
       {loading && <p>Processing... Please wait.</p>}
 
-      {/* Display results */}
-      {result && (
-        <div>
-          <h2>Results for {algorithm}</h2>
-          <p>Average Wait Time: {result.avgWaitTime.toFixed(2)}</p>
-          <p>Average Turnaround Time: {result.avgTurnAroundTime.toFixed(2)}</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {Object.entries(results).map(([algorithm, result]) => (
+          <div key={algorithm} style={{ margin: '10px', padding: '10px', border: '1px solid #ccc' }}>
+            <h2>{algorithm}</h2>
+            <p>Average Wait Time: {result.avgWaitTime?.toFixed(2) ?? 'N/A'}</p>
+            <p>Average Turnaround Time: {result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}</p>
 
-          {/* Chart for burst times */}
-          <ChartComponent
-            data={{
-              labels: result.result.map((p) => `P${p.id}`),
-              burstTimes: result.result.map((p) => p.burstTime),
-              waitTimes: result.result.map((p) => p.waitTime),
-              turnaroundTimes: result.result.map((p) => p.turnAroundTime),
-            }}
-          />
-        </div>
-      )}
+            <ChartComponent
+              data={{
+                labels: result.result.map((p) => `P${p.id}`),
+                burstTimes: result.result.map((p) => p.burstTime),
+                waitTimes: result.result.map((p) => p.waitTime),
+                turnaroundTimes: result.result.map((p) => p.turnAroundTime),
+              }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

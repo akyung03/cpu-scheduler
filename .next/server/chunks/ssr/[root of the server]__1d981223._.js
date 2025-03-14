@@ -426,6 +426,14 @@ function Header() {
     }, this);
 }
 }}),
+"[externals]/jspdf [external] (jspdf, cjs)": (function(__turbopack_context__) {
+
+var { g: global, d: __dirname, m: module, e: exports } = __turbopack_context__;
+{
+const mod = __turbopack_context__.x("jspdf", () => require("jspdf"));
+
+module.exports = mod;
+}}),
 "[project]/pages/index.js [ssr] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
@@ -443,10 +451,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$algorithms$2f$rr$2e$js__$5b$
 var __TURBOPACK__imported__module__$5b$project$5d2f$algorithms$2f$mlfq$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/algorithms/mlfq.js [ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chart$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/Chart.js [ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Header$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/Header.js [ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$externals$5d2f$jspdf__$5b$external$5d$__$28$jspdf$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/jspdf [external] (jspdf, cjs)");
 var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
     __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chart$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__
 ]);
 ([__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chart$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__] = __turbopack_async_dependencies__.then ? (await __turbopack_async_dependencies__)() : __turbopack_async_dependencies__);
+;
 ;
 ;
 ;
@@ -463,7 +473,6 @@ function Home() {
     const [selectedAlgorithms, setSelectedAlgorithms] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])([]);
     const [results, setResults] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])({});
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
-    // Generate random processes
     const generateProcesses = ()=>{
         const generatedProcesses = [];
         for(let i = 0; i < numProcesses; i++){
@@ -517,25 +526,108 @@ function Home() {
             setLoading(false);
         }, 1000);
     };
+    const resetSimulation = ()=>{
+        setNumProcesses(3);
+        setTimeQuantum(2);
+        setProcesses([]);
+        setSelectedAlgorithms([]);
+        setResults({});
+    };
+    const downloadPDF = ()=>{
+        const doc = new __TURBOPACK__imported__module__$5b$externals$5d2f$jspdf__$5b$external$5d$__$28$jspdf$2c$__cjs$29$__["default"]();
+        let yOffset = 10;
+        Object.entries(results).forEach(([algorithm, result])=>{
+            doc.text(`Algorithm: ${algorithm}`, 10, yOffset);
+            yOffset += 10;
+            doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
+            yOffset += 10;
+            doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
+            yOffset += 10;
+            result.result.forEach((process)=>{
+                doc.text(`Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`, 10, yOffset);
+                yOffset += 10;
+            });
+            yOffset += 10;
+        });
+        doc.save('scheduling_results.pdf');
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Header$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 82,
+                lineNumber: 109,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h1", {
                 children: "CPU Scheduling Algorithms"
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 83,
+                lineNumber: 110,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                children: [
+                    "1. Enter the number of processes and click ",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("strong", {
+                        children: "Generate Processes"
+                    }, void 0, false, {
+                        fileName: "[project]/pages/index.js",
+                        lineNumber: 112,
+                        columnNumber: 53
+                    }, this),
+                    "."
+                ]
+            }, void 0, true, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 112,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                children: "2. Select the algorithms you want to run."
+            }, void 0, false, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 113,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                children: [
+                    "3. Click ",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("strong", {
+                        children: "Run Selected Algorithms"
+                    }, void 0, false, {
+                        fileName: "[project]/pages/index.js",
+                        lineNumber: 114,
+                        columnNumber: 19
+                    }, this),
+                    " to see the results."
+                ]
+            }, void 0, true, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 114,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                children: [
+                    "4. After running, click ",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("strong", {
+                        children: "Reset Simulation"
+                    }, void 0, false, {
+                        fileName: "[project]/pages/index.js",
+                        lineNumber: 115,
+                        columnNumber: 34
+                    }, this),
+                    " to start a new simulation."
+                ]
+            }, void 0, true, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 115,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("label", {
                 children: "Number of Processes: "
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 86,
+                lineNumber: 117,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
@@ -544,7 +636,7 @@ function Home() {
                 onChange: (e)=>setNumProcesses(parseInt(e.target.value))
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 87,
+                lineNumber: 118,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -552,17 +644,17 @@ function Home() {
                 children: "Generate Processes"
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 92,
+                lineNumber: 123,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+            selectedAlgorithms.includes('RR') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("label", {
                         children: "Time Quantum (for RR): "
                     }, void 0, false, {
                         fileName: "[project]/pages/index.js",
-                        lineNumber: 95,
-                        columnNumber: 9
+                        lineNumber: 127,
+                        columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
                         type: "number",
@@ -570,14 +662,14 @@ function Home() {
                         onChange: (e)=>setTimeQuantum(parseInt(e.target.value))
                     }, void 0, false, {
                         fileName: "[project]/pages/index.js",
-                        lineNumber: 96,
-                        columnNumber: 9
+                        lineNumber: 128,
+                        columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 94,
-                columnNumber: 7
+                lineNumber: 126,
+                columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                 children: [
@@ -585,7 +677,7 @@ function Home() {
                         children: "Select Algorithms:"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.js",
-                        lineNumber: 105,
+                        lineNumber: 137,
                         columnNumber: 9
                     }, this),
                     [
@@ -603,36 +695,62 @@ function Home() {
                                     onChange: handleAlgorithmChange
                                 }, void 0, false, {
                                     fileName: "[project]/pages/index.js",
-                                    lineNumber: 108,
+                                    lineNumber: 140,
                                     columnNumber: 13
                                 }, this),
                                 algorithm
                             ]
                         }, algorithm, true, {
                             fileName: "[project]/pages/index.js",
-                            lineNumber: 107,
+                            lineNumber: 139,
                             columnNumber: 11
                         }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 104,
+                lineNumber: 136,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
                 onClick: runAlgorithms,
-                disabled: loading,
+                disabled: loading || processes.length === 0,
                 children: loading ? 'Running...' : 'Run Selected Algorithms'
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 120,
+                lineNumber: 151,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                onClick: resetSimulation,
+                style: {
+                    marginLeft: '10px',
+                    backgroundColor: 'red',
+                    color: 'white'
+                },
+                children: "Reset Simulation"
+            }, void 0, false, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 155,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                onClick: downloadPDF,
+                style: {
+                    marginLeft: '10px',
+                    backgroundColor: 'green',
+                    color: 'white'
+                },
+                children: "Download Results as PDF"
+            }, void 0, false, {
+                fileName: "[project]/pages/index.js",
+                lineNumber: 159,
                 columnNumber: 7
             }, this),
             loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
                 children: "Processing... Please wait."
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 124,
+                lineNumber: 163,
                 columnNumber: 19
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -651,27 +769,27 @@ function Home() {
                                 children: algorithm
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.js",
-                                lineNumber: 130,
+                                lineNumber: 168,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
                                 children: [
                                     "Average Wait Time: ",
-                                    result.avgWaitTime.toFixed(2)
+                                    result.avgWaitTime?.toFixed(2) ?? 'N/A'
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.js",
-                                lineNumber: 131,
+                                lineNumber: 169,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
                                 children: [
                                     "Average Turnaround Time: ",
-                                    result.avgTurnAroundTime.toFixed(2)
+                                    result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.js",
-                                lineNumber: 132,
+                                lineNumber: 170,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chart$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -683,24 +801,24 @@ function Home() {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.js",
-                                lineNumber: 135,
+                                lineNumber: 172,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, algorithm, true, {
                         fileName: "[project]/pages/index.js",
-                        lineNumber: 129,
+                        lineNumber: 167,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/pages/index.js",
-                lineNumber: 127,
+                lineNumber: 165,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/pages/index.js",
-        lineNumber: 81,
+        lineNumber: 108,
         columnNumber: 5
     }, this);
 }
@@ -709,4 +827,4 @@ __turbopack_async_result__();
 
 };
 
-//# sourceMappingURL=%5Broot%20of%20the%20server%5D__63d07327._.js.map
+//# sourceMappingURL=%5Broot%20of%20the%20server%5D__1d981223._.js.map
