@@ -20,5 +20,11 @@
     "@types/react-dom": "^19",
     "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4"
-  }
+  },
+  "scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d out"
+}
 }
