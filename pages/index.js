@@ -83,22 +83,22 @@ export default function Home() {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    let yOffset = 10;
+    let yOffset = 7;
 
     Object.entries(results).forEach(([algorithm, result]) => {
-      doc.text(`Algorithm: ${algorithm}`, 10, yOffset);
-      yOffset += 10;
-      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
-      yOffset += 10;
-      doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 10, yOffset);
-      yOffset += 10;
+      doc.text(`Algorithm: ${algorithm}`, 7, yOffset);
+      yOffset += 7;
+      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 7 , yOffset);
+      yOffset += 7;
+      doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 7, yOffset);
+      yOffset += 7;
 
       result.result.forEach((process) => {
         doc.text(`Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`, 10, yOffset);
-        yOffset += 10;
+        yOffset += 7;
       });
 
-      yOffset += 10;
+      yOffset += 7;
     });
 
     doc.save('scheduling_results.pdf');
