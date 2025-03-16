@@ -9,7 +9,7 @@ import Header from '../components/Header';
 import dynamic from 'next/dynamic';
 
 // Dynamically import jsPDF to avoid SSR issues
-const jsPDF = dynamic(() => import('jspdf').then((module) => module.default), { ssr: false });
+const jsPDF = dynamic(() => import('jspdf'), { ssr: false });
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
@@ -84,9 +84,9 @@ export default function Home() {
     setResults({});
   };
 
+  // Download the results as a PDF
   const downloadPDF = async () => {
     try {
-      // Dynamically import jsPDF if not already loaded
       const { default: jsPDF } = await import('jspdf');
       
       if (!jsPDF) {
@@ -99,7 +99,7 @@ export default function Home() {
         return;
       }
 
-      const doc = new jsPDF(); // Correct initialization
+      const doc = new jsPDF();
       let yOffset = 7;
 
       Object.entries(results).forEach(([algorithm, result]) => {
