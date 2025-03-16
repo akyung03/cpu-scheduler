@@ -1,14 +1,6 @@
 {
-<<<<<<< HEAD
-  "/_error": "pages/_error.js",
-  "/": "pages/index.html",
-  "/_app": "pages/_app.js",
-  "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
-=======
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js"
->>>>>>> 15742743a41a543be986deb9d5ef9ac5ef761609
 }
