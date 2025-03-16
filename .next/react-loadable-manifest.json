@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "node_modules/jspdf/dist/jspdf.es.min.js -> canvg": {
     "id": 6582,
     "files": [
@@ -23,6 +24,12 @@
     "files": [
       "static/chunks/643144ee.5c320d8f2960a22e.js",
       "static/chunks/115.fe7dd2f2ee12ef2e.js"
+=======
+  "pages/index.js -> jspdf": {
+    "id": "pages/index.js -> jspdf",
+    "files": [
+      "static/chunks/_pages-dir-browser_node_modules_jspdf_dist_jspdf_min_js.js"
+>>>>>>> 15742743a41a543be986deb9d5ef9ac5ef761609
     ]
   }
 }

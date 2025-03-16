@@ -9,7 +9,11 @@ import Header from '../components/Header';
 import dynamic from 'next/dynamic';
 
 // Dynamically import jsPDF to avoid SSR issues
+<<<<<<< HEAD
 const jsPDF = dynamic(() => import('jspdf').then((module) => module.default), { ssr: false });
+=======
+const jsPDF = dynamic(() => import('jspdf'), { ssr: false });
+>>>>>>> 15742743a41a543be986deb9d5ef9ac5ef761609
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
@@ -84,6 +88,7 @@ export default function Home() {
     setResults({});
   };
 
+<<<<<<< HEAD
   const downloadPDF = async () => {
     try {
       // Dynamically import jsPDF if not already loaded
@@ -126,6 +131,43 @@ export default function Home() {
     } catch (error) {
       console.error('Error loading or using jsPDF:', error);
     }
+=======
+  const downloadPDF = () => {
+    if (!jsPDF) {
+      console.error('jsPDF is not loaded yet.');
+      return;
+    }
+
+    if (!results || Object.keys(results).length === 0) {
+      console.error('No results to export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+    let yOffset = 7;
+
+    Object.entries(results).forEach(([algorithm, result]) => {
+      doc.text(`Algorithm: ${algorithm}`, 7, yOffset);
+      yOffset += 7;
+      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 7, yOffset);
+      yOffset += 7;
+      doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 7, yOffset);
+      yOffset += 7;
+
+      result.result.forEach((process) => {
+        doc.text(
+          `Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`,
+          10,
+          yOffset
+        );
+        yOffset += 7;
+      });
+
+      yOffset += 7;
+    });
+
+    doc.save('scheduling_results.pdf');
+>>>>>>> 15742743a41a543be986deb9d5ef9ac5ef761609
   };
 
   return (
