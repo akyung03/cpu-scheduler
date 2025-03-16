@@ -6,7 +6,10 @@ import { rr } from '../algorithms/rr';
 import { mlfq } from '../algorithms/mlfq';
 import ChartComponent from '../components/Chart';
 import Header from '../components/Header';
-import jsPDF from 'jspdf';
+import dynamic from 'next/dynamic';
+
+// Dynamically import jsPDF to avoid SSR issues
+const jsPDF = dynamic(() => import('jspdf'), { ssr: false });
 
 export default function Home() {
   const [numProcesses, setNumProcesses] = useState(3);
@@ -82,19 +85,33 @@ export default function Home() {
   };
 
   const downloadPDF = () => {
+    if (!jsPDF) {
+      console.error('jsPDF is not loaded yet.');
+      return;
+    }
+
+    if (!results || Object.keys(results).length === 0) {
+      console.error('No results to export.');
+      return;
+    }
+
     const doc = new jsPDF();
     let yOffset = 7;
 
     Object.entries(results).forEach(([algorithm, result]) => {
       doc.text(`Algorithm: ${algorithm}`, 7, yOffset);
       yOffset += 7;
-      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 7 , yOffset);
+      doc.text(`Average Wait Time: ${result.avgWaitTime?.toFixed(2) ?? 'N/A'}`, 7, yOffset);
       yOffset += 7;
       doc.text(`Average Turnaround Time: ${result.avgTurnAroundTime?.toFixed(2) ?? 'N/A'}`, 7, yOffset);
       yOffset += 7;
 
       result.result.forEach((process) => {
-        doc.text(`Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`, 10, yOffset);
+        doc.text(
+          `Process ${process.id}: Burst Time - ${process.burstTime}, Wait Time - ${process.waitTime}, Turnaround Time - ${process.turnAroundTime}`,
+          10,
+          yOffset
+        );
         yOffset += 7;
       });
 

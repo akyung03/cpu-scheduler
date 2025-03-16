@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST='{"pages/index.js -> jspdf":{"id":7458,"files":["static/chunks/93a5a7d1.297a168e89fd564e.js","static/chunks/666.0d3e5248b9e93bbe.js"]}}';
